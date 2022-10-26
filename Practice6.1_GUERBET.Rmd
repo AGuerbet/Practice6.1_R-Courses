@@ -1,0 +1,68 @@
+---
+title: "Practice 6.1"
+author: "Arnaud Guerbet"
+date: "2022-10-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Lotka- Volterra equation
+
+Definition of the model "grow" with fix competition coefficients (a12=0.8; a21=0.8), carrying capacities (K1=100, K2=120) and a number of generation of 30. 
+Growth rate of two species need to be defined. 
+
+```{r cars}
+grow<-function(start_1,start_2,growth.rate1,growth.rate2){
+  num_gen<-30
+  N1 <- rep(1,num_gen)
+  N2 <- rep(1,num_gen)
+  generation<-rep(0,num_gen)
+  grw.rt1<-growth.rate1
+  grw.rt2<-growth.rate2
+  K1<-100
+  K2<-120
+  a12<-0.8
+  a21<-0.8
+  N1[1]<-start_1
+  N2[1]<-start_2
+  generation<-1:num_gen
+  
+  for (i in 2:num_gen)  {
+    N1[i] = N1[i-1] + (grw.rt1* N1[i-1] * ((K1-N1[i-1]-(a12*N2[i-1]))/K1))
+    N2[i] = N2[i-1] + (grw.rt2* N2[i-1] * ((K2-N2[i-1]-(a21*N1[i-1]))/K2))
+  } 
+  
+  if (N1[1]>0.5 && N2[1]<0.5){
+    plot(N1~generation,typ="b",ylim=c(0,K1+20),ylab="N")}  
+  
+  if (N1[1]<0.5 && N2[1]>0.5){
+    plot(N2~generation,typ="b",ylim=c(0,K2+20),ylab="N")}
+  
+  if (N1[1]>0.5 && N2[1]>0.5){
+    plot(N2~generation,typ="b",ylim=c(0,max(c(K1+20,K2+20))),ylab="N")
+    lines(N1~generation,typ="b",col=2)}
+}
+```
+
+## Plots of the model
+
+First plot for N1 only (smart_1=1), second one for N2 (smart_2=1) and the last one for the interaction between N1 and N2 (smart_1=1;smart_2=1).
+Growth.rate1 is defined by 1.5 and Growth.rate2 by 0.8.
+
+```{r pressure, echo=FALSE}
+par(mfrow=c(3,1),las=1)
+
+grow(1,0,1.5,0.8)
+text(15,50,"Species 1 alone")
+
+grow(0,1,1.5,0.8)
+text(15,60,"Species 2 alone")
+
+grow(1,1,1.5,0.8)
+text(6,120,"Both Species competing")
+```
+
+
